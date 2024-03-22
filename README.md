@@ -251,6 +251,10 @@ FROM Customer2017_cte c
 JOIN allCustomer_cte a 
 ON c.CustomerID = a.CustomerID;
 ```
+
+![Screenshot 2024-03-22 145919](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/950c1054-e3ee-4b0a-8570-169ecc94e911)
+
+
 *There was 100% customer retention rate in 2017*
 
 **5. Customer Segmentation: Segment customers into different groups (e.g., high-value, medium-value, low-value) based on their total purchases, and analyze the average order value and frequency of each group.**
@@ -280,6 +284,66 @@ SELECT
 FROM  Segmentation
 GROUP BY customer_segment;
 ```
+![Screenshot 2024-03-22 150257](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/0b0c03f2-421f-4995-bfcf-d8b3b7a6b9c4)
+
+## 4.2 Product Analysis 
+
+**1. Top 5 Most Sold Products: Retrieve the top 5 products by quantity sold.**
+
+```sql
+SELECT TOP 5 Product_Name,
+       SUM(quantity) AS	qtysold
+FROM dim_product p
+JOIN FactSales f ON p.ProductKey = f.ProductKey
+GROUP BY Product_Name
+ORDER BY qtysold DESC;
+```
+![Screenshot 2024-03-22 170825](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/567652e8-6f58-4147-a12f-22c06e83d81a)
+
+*Staples,Staple envelope,Easy-staple paper, Staples in misc. colors, KI Adjustable-Height Table are the top 5 products sold*
+
+**2. Product with the Highest Profit: Find the product with the highest total profit.**
+
+```sql
+SELECT TOP 1 Product_Name,
+       ROUND(SUM(Profit),2) AS profit
+FROM dim_product p
+JOIN FactSales f ON p.ProductKey = f.ProductKey
+GROUP BY Product_Name
+ORDER BY profit DESC;
+```
+![Screenshot 2024-03-22 171552](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/30d50f5f-ae70-44f5-82f2-1c422296c311)
+
+*Canon imageCLASS 2200 Advanced Copier generated the highest profit*
+
+**3. Profitable Products Across Regions: Find the top 3 most profitable products in each region.**
+```sql
+WITH ProfitableProducts AS (
+    SELECT 
+        Region,
+        Product_Name,
+        ROUND(SUM(profit),2) AS total_profit,
+        ROW_NUMBER() OVER (PARTITION BY Region ORDER BY SUM(profit) DESC) AS product_rank
+    FROM FactSales f
+    JOIN  dim_product d ON f.ProductKey = d.ProductKey
+    JOIN  dim_geography g ON f.GeographyKey = g.GeographyKey
+    GROUP BY  Region, Product_Name
+)
+SELECT  Region,
+        Product_Name,
+        total_profit
+FROM  ProfitableProducts
+WHERE 
+    product_rank <= 3;
+
+```
+![Screenshot 2024-03-22 172031](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/b071632b-a192-4092-ab89-d2cc2db02252)
+
+
+Seasonal Sales Analysis: Identify the top-selling product category in each quarter of the year.
+Product Category Ranking: Rank product categories by total sales in descending order using window functions.
+What is the average discount for each product category?
+Find the top 5 customers who have made the highest total sales in each state, along with the product category they mostly purchased. Use a Common Table Expression (CTE) to calculate the total sales for each customer in each state, and then retrieve the top 5 customers for each state. Additionally, provide the product category that these top customers predominantly bought in each state.
 
 
 
