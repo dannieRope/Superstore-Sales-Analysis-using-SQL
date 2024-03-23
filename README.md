@@ -535,8 +535,25 @@ ORDER BY total_revenue DESC,total_profit
 ![image](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/78302219-babe-4190-b341-d6eb0ed6c8c5)
 
 
+# 5.0 INSIGHTS AND RECOMMENDATION
 
-# 5.0 INSIGHT AND RECOMMENDATION
+- The total number orders placed from 2014 - 2017 is 9,994 which generated about $2,297,201 in revenue along with $286,397.02 profit realized.
+  
+- The order count exhibited a consistent increase year by year, escalating from 1,993 orders in 2014 to a peak of 3,312 orders in 2017. Among the observed years, 2017 marked the highest number of orders, while 2014 recorded the lowest volume. 
+
+- The products in the “Technology” category generated the highest sales.
+  
+- Among categories, “Office Supplies” stands out with 6,026 orders, concurrently having the highest count of returns at 296.
+
+- Staples is the mosted ordered product however, Canon imageCLASS 2200 Advanced Copier is the most profitable product.
+
+- The most performing regions are the West then the East, Central and South regions in that order. It also good to note that, Canon imageCLASS 2200 Advanced Copier is the most profitable product in all the regionsexcept for the south with Fellowes PB500 Electric Punch Plastic Comb Binding Machine with Manual Bind as the most profitable product.
+
+- William Brown is the customer with the most orders placed however, Sean Miller is the customer with most spending 
+
+
+
+
 
 
 
