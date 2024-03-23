@@ -24,7 +24,7 @@ My aim is to analyze the superstore dataset by utilizing database management str
 
 ### 1.2.1 Data Source and Structure
 
-The superstore dataset is obtained from the Tableau website; you can also find it on Kaggle via this link. The dataset consists of 9994 rows, excluding the header. It contains data recorded between the 3rd of January 2014 (the first order date) and the 30th of December 2017 (the last order date).
+The superstore dataset is obtained from the Tableau [website](https://community.tableau.com/s/question/0D54T00000CWeX8SAL/detail); you can also find it on Kaggle via this [link](https://www.kaggle.com/datasets/vivek468/superstore-dataset-final). The dataset consists of 9994 rows, excluding the header. It contains data recorded between the 3rd of January 2014 (the first order date) and the 30th of December 2017 (the last order date).
 There are 21 columns. Below are the column names and their descriptions in the dataset. 
 
 1. Row ID: unique ID for each row.
@@ -180,7 +180,104 @@ Find the SQL code for the normalization [here](https://github.com/dannieRope/Sup
 
 # 4.0 EXPLORATORY DATA ANALYSIS (EDA)
 
-## 4.1 Customer Analysis
+## 4.1 Sales Analysis
+
+**1. Total Sales Amount: Calculate the total sales amount for all transactions in the dataset.**
+```sql
+SELECT
+      ROUND(SUM(Sales),2) AS total_sales
+FROM FactSales;
+```
+
+![Screenshot 2024-03-23 053851](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/90b0256b-429c-4b37-b6b8-d4e4d18b6500)
+
+**2. What is the total profit for all orders in the dataset?** 
+
+```sql
+SELECT 
+      ROUND(SUM(profit),2) AS total_profit
+FROM FactSales;
+```
+![Screenshot 2024-03-23 054249](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/f3f46171-6efe-4d48-be1e-34cc4652a460)
+
+**3. How many orders are in the dataset?**
+
+```sql
+SELECT 
+      COUNT(orderid) AS total_orders
+FROM FactSales;
+```
+
+![Screenshot 2024-03-23 054527](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/bf2926ff-2de1-4154-91f4-f26ced6177d8)
+
+**4. What is the average discount applied to orders?**
+
+```sql
+SELECT 
+      ROUND(AVG(discount),2) AS avg_discount
+FROM FactSales;
+```
+
+![image](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/65be0f87-086f-47f4-97d9-4523340628ad)
+
+**5. How many orders were placed in each year?**
+
+```sql
+SELECT 
+      YEAR(Orderdate) AS year,
+	  COUNT(Orderid) AS total_orders
+FROM FactSales
+GROUP BY YEAR(Orderdate)
+ORDER BY year;
+```
+
+![image](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/aa9a39f0-ec3f-4c2a-9e88-57a11df90a5f)
+
+
+**6. Category Sales Growth: Calculate the year-over-year growth in sales for each product category.**
+
+```sql
+WITH year_sales AS (
+      SELECT 
+            YEAR(orderdate) AS sales_year,
+			category,
+            ROUND(SUM(Sales),2) AS total_sales,
+	        LAG(ROUND(SUM(Sales),2))OVER(PARTITION BY category ORDER BY YEAR(orderdate)) AS previous_year_sales
+      FROM FactSales f
+	  JOIN dim_product p ON f.ProductKey = p.ProductKey
+      GROUP BY  YEAR(orderdate),Category
+)
+SELECT 
+      sales_year,
+	  category,
+	  total_sales,
+	  ROUND((total_sales - previous_year_sales)/previous_year_sales,2) AS yoy_growth
+FROM year_sales
+```
+
+![image](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/27a8392a-e730-4ba8-be68-6118807952ba)
+
+
+**7. Yearly Growth Rate: Calculate the yearly growth rate in sales from one year to the next, using window functions**
+
+```sql
+SELECT 
+       sales_year,
+	   total_sales,
+	   ROUND(((total_sales - previous_year_sales)/previous_year_sales)*100,2) AS yoy_growth
+FROM (SELECT 
+           YEAR(Orderdate) AS sales_year,
+	       ROUND(SUM(sales),2) AS total_sales,
+	       LAG(ROUND(SUM(sales),2))OVER(ORDER BY YEAR(Orderdate)) AS previous_year_sales
+      FROM FactSales
+	  GROUP BY YEAR(OrderDate)
+	  ) AS yearly_sales
+```
+
+![image](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/f8c009a1-afd9-47a5-93bd-eca54d07e47c)
+
+
+## 4.2 Customer Analysis
 
 **1. Customer with the Highest Number of Orders: Find the customer who placed the highest number of orders.**
 
@@ -287,7 +384,7 @@ GROUP BY customer_segment;
 ```
 ![Screenshot 2024-03-22 150257](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/0b0c03f2-421f-4995-bfcf-d8b3b7a6b9c4)
 
-## 4.2 Product Analysis 
+## 4.3 Product Analysis 
 
 **1. Top 5 Most Sold Products: Retrieve the top 5 products by quantity sold.**
 
@@ -422,7 +519,7 @@ WHERE sales_rank <= 5;
 
 ![Screenshot 2024-03-23 053036](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/43a29d87-1442-45ba-99ad-2a3b142d67a8)
 
-## 4.2 Location Analysis 
+## 4.4 Location Analysis 
 
 ```sql
 SELECT 
@@ -438,101 +535,9 @@ ORDER BY total_revenue DESC,total_profit
 ![image](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/78302219-babe-4190-b341-d6eb0ed6c8c5)
 
 
-## 4.3 Sales Analysis
 
-**1. Total Sales Amount: Calculate the total sales amount for all transactions in the dataset.**
-```sql
-SELECT
-      ROUND(SUM(Sales),2) AS total_sales
-FROM FactSales;
-```
+# 5.0 INSIGHT AND RECOMMENDATION
 
-![Screenshot 2024-03-23 053851](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/90b0256b-429c-4b37-b6b8-d4e4d18b6500)
-
-**2. What is the total profit for all orders in the dataset?** 
-
-```sql
-SELECT 
-      ROUND(SUM(profit),2) AS total_profit
-FROM FactSales;
-```
-![Screenshot 2024-03-23 054249](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/f3f46171-6efe-4d48-be1e-34cc4652a460)
-
-**3. How many orders are in the dataset?**
-
-```sql
-SELECT 
-      COUNT(orderid) AS total_orders
-FROM FactSales;
-```
-
-![Screenshot 2024-03-23 054527](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/bf2926ff-2de1-4154-91f4-f26ced6177d8)
-
-**4. What is the average discount applied to orders?**
-
-```sql
-SELECT 
-      ROUND(AVG(discount),2) AS avg_discount
-FROM FactSales;
-```
-
-![image](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/65be0f87-086f-47f4-97d9-4523340628ad)
-
-**5. How many orders were placed in each year?**
-
-```sql
-SELECT 
-      YEAR(Orderdate) AS year,
-	  COUNT(Orderid) AS total_orders
-FROM FactSales
-GROUP BY YEAR(Orderdate)
-ORDER BY year;
-```
-
-![image](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/aa9a39f0-ec3f-4c2a-9e88-57a11df90a5f)
-
-
-**6. Category Sales Growth: Calculate the year-over-year growth in sales for each product category.**
-
-```sql
-WITH year_sales AS (
-      SELECT 
-            YEAR(orderdate) AS sales_year,
-			category,
-            ROUND(SUM(Sales),2) AS total_sales,
-	        LAG(ROUND(SUM(Sales),2))OVER(PARTITION BY category ORDER BY YEAR(orderdate)) AS previous_year_sales
-      FROM FactSales f
-	  JOIN dim_product p ON f.ProductKey = p.ProductKey
-      GROUP BY  YEAR(orderdate),Category
-)
-SELECT 
-      sales_year,
-	  category,
-	  total_sales,
-	  ROUND((total_sales - previous_year_sales)/previous_year_sales,2) AS yoy_growth
-FROM year_sales
-```
-
-![image](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/27a8392a-e730-4ba8-be68-6118807952ba)
-
-
-**7. Yearly Growth Rate: Calculate the yearly growth rate in sales from one year to the next, using window functions**
-
-```sql
-SELECT 
-       sales_year,
-	   total_sales,
-	   ROUND(((total_sales - previous_year_sales)/previous_year_sales)*100,2) AS yoy_growth
-FROM (SELECT 
-           YEAR(Orderdate) AS sales_year,
-	       ROUND(SUM(sales),2) AS total_sales,
-	       LAG(ROUND(SUM(sales),2))OVER(ORDER BY YEAR(Orderdate)) AS previous_year_sales
-      FROM FactSales
-	  GROUP BY YEAR(OrderDate)
-	  ) AS yearly_sales
-```
-
-![image](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/f8c009a1-afd9-47a5-93bd-eca54d07e47c)
 
 
 
