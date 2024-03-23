@@ -537,6 +537,8 @@ ORDER BY total_revenue DESC,total_profit
 
 # 5.0 INSIGHTS AND RECOMMENDATION
 
+## 5.1 INSIGHTS
+
 - The total number orders placed from 2014 - 2017 is 9,994 which generated about $2,297,201 in revenue along with $286,397.02 profit realized.
   
 - The order count exhibited a consistent increase year by year, escalating from 1,993 orders in 2014 to a peak of 3,312 orders in 2017. Among the observed years, 2017 marked the highest number of orders, while 2014 recorded the lowest volume. 
@@ -549,7 +551,21 @@ ORDER BY total_revenue DESC,total_profit
 
 - The most performing regions are the West then the East, Central and South regions in that order. It also good to note that, Canon imageCLASS 2200 Advanced Copier is the most profitable product in all the regionsexcept for the south with Fellowes PB500 Electric Punch Plastic Comb Binding Machine with Manual Bind as the most profitable product.
 
-- William Brown is the customer with the most orders placed however, Sean Miller is the customer with most spending 
+- William Brown is the customer with the most orders placed however, Sean Miller is the customer with most spending
+
+## 5.2 RECOMMENDATION
+
+1. Intensify marketing efforts: With the number of orders consistently increasing each year, it would be beneficial to increase marketing efforts to capitalize on this growth trend. Utilize customer data to personalize promotions and offers for popular products and categories.
+
+2. Consider expanding the product line within the "Technology" category or introducing new technology-related products to cater to customer demand. Providing a wider selection of electronics, gadgets, or tech accessories could be one way to do this.
+
+4. Staples is the most ordered product, but it's critical to analyze its profitability
+Instead of just focusing on sales volume, consider the profitability of products. Invest resources in promoting and optimizing the sales of high-profit margin products, such as the Canon imageCLASS 2200 Advanced Copier. Consider bundling or cross-selling strategies to increase sales of profitable items.
+
+5. **Regional Focus**: Given the regional performance, prioritize marketing and sales efforts in the West and East regions, where performance is strongest. Tailor marketing messages and promotions to resonate with the preferences and needs of customers in these regions. Additionally, conduct further analysis to understand the factors driving performance differences across regions and adjust strategies accordingly.
+
+6. **Customer Engagement**: Recognizing William Brown as the customer with the most orders and Sean Miller as the customer with the highest spending, it's crucial to nurture relationships with these valuable customers. Implement loyalty programs, exclusive offers, 
+
 
 
 
