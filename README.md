@@ -5,6 +5,7 @@ A popular sample dataset from Tableau, the Superstore dataset includes fictitiou
 It contains information about customers, products, orders, and geographic regions. It is an excellent resource for learning about retail sales operations and honing data analysis skills. 
 
 As a data analyst, I have been tasked with writing SQL queries to analyze the dataset to uncover trends and patterns hidden within the dataset and also provide useful insights and 
+
 recommendations to help in better decision-making in order to optimize sales performance. The insights gained from this analysis can then be used to identify areas for improvement and suggest strategies to increase sales. 
 
 My aim is to analyze the superstore dataset by utilizing database management strategies, data visualization tools, and SQL queries in order to derive useful insights and useful information.
@@ -340,10 +341,201 @@ WHERE
 ![Screenshot 2024-03-22 172031](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/b071632b-a192-4092-ab89-d2cc2db02252)
 
 
-Seasonal Sales Analysis: Identify the top-selling product category in each quarter of the year.
-Product Category Ranking: Rank product categories by total sales in descending order using window functions.
-What is the average discount for each product category?
-Find the top 5 customers who have made the highest total sales in each state, along with the product category they mostly purchased. Use a Common Table Expression (CTE) to calculate the total sales for each customer in each state, and then retrieve the top 5 customers for each state. Additionally, provide the product category that these top customers predominantly bought in each state.
+**4. Seasonal Sales Analysis: Identify the top-selling product category in each quarter of the year.**
+
+```sql
+WITH topselling_cte AS (
+                 SELECT CONCAT('Q',DATEPART(QUARTER,Orderdate)) AS quarters,
+				 YEAR(Orderdate) AS Year,
+				 Product_name,
+				 SUM(Quantity) As qty,
+				 ROW_NUMBER() OVER(PARTITION BY CONCAT('Q',DATEPART(QUARTER,Orderdate)),YEAR(Orderdate) ORDER BY SUM(Quantity)DESC) AS quarter_rank
+				 FROM FactSales F
+				 JOIN dim_product D ON F.ProductKey = D.ProductKey
+				 GROUP BY CONCAT('Q',DATEPART(QUARTER,Orderdate)),YEAR(Orderdate),Product_name
+)
+SELECT quarters,
+       Year,
+       product_name,
+	   qty
+FROM topselling_cte
+WHERE quarter_rank = 1;
+```
+
+![Screenshot 2024-03-23 051352](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/66529430-b7c5-4e32-81a3-b0c0962d4bfd)
+
+
+
+**5. Product Category Ranking: Rank product categories by total sales in descending order using window functions.**
+
+```sql
+SELECT category,
+       ROUND(SUM(Sales),2) AS rank_cat,
+	   RANK()OVER( ORDER BY SUM(Sales) DESC) AS rank_cat
+FROM FactSales F
+JOIN dim_product P ON F.ProductKey = P.ProductKey
+GROUP BY Category;
+```
+![Screenshot 2024-03-23 051915](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/1a213ff1-1a41-4a11-b9e5-59cf37ee9dbb)
+
+*The technology category ranks first, followed by furniture and office supplies, respectively.*
+
+**6. What is the average discount for each product category?**
+```sql
+SELECT
+       category,
+       ROUND(AVG(discount),2) AS avg_discount
+FROM FactSales F
+JOIN dim_product P ON F.ProductKey = P.ProductKey
+GROUP BY Category
+ORDER BY avg_discount DESC;
+```
+
+![Screenshot 2024-03-23 052509](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/2c3908f1-dbbd-4830-9d2d-9349fc43d1dd)
+
+
+**7. Find the top 5 customers who have made the highest total sales in each state, along with the product category they mostly purchased. 
+Use a Common Table Expression (CTE) to calculate the total sales for each customer in each state, and then retrieve the top 5 customers for each state. 
+Additionally, provide the product category that these top customers predominantly bought in each state.**
+
+```sql
+WITH cte_customer AS (
+                SELECT 
+				      state,
+					  Customer_Name,
+					  category,
+					  ROUND(SUM(Sales),2) AS total_sales,
+					  ROW_NUMBER()OVER(PARTITION BY state ORDER BY SUM(Sales) DESC) AS sales_rank
+				FROM Factsales F
+				JOIN dim_customer c ON f.customerId = c.Customer_ID
+				JOIN dim_product p ON f.productkey = p.productkey
+				JOIN dim_geography g ON f.geographyKey = g.geographyKey
+				GROUP BY state,Customer_Name,Category
+)
+SELECT State,
+       Customer_Name,
+	   Category,
+	   total_sales
+FROM cte_customer
+WHERE sales_rank <= 5;
+```
+
+![Screenshot 2024-03-23 053036](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/43a29d87-1442-45ba-99ad-2a3b142d67a8)
+
+## 4.2 Location Analysis 
+
+```sql
+SELECT 
+      Region,
+	  ROUND(SUM(Sales),2) AS total_revenue,
+	  ROUND(SUM(profit),2) AS total_profit
+FROM FactSales f
+JOIN dim_geography g ON f.GeographyKey = g.GeographyKey
+GROUP BY Region
+ORDER BY total_revenue DESC,total_profit
+```
+
+![image](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/78302219-babe-4190-b341-d6eb0ed6c8c5)
+
+
+## 4.3 Sales Analysis
+
+**1. Total Sales Amount: Calculate the total sales amount for all transactions in the dataset.**
+```sql
+SELECT
+      ROUND(SUM(Sales),2) AS total_sales
+FROM FactSales;
+```
+
+![Screenshot 2024-03-23 053851](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/90b0256b-429c-4b37-b6b8-d4e4d18b6500)
+
+**2. What is the total profit for all orders in the dataset?** 
+
+```sql
+SELECT 
+      ROUND(SUM(profit),2) AS total_profit
+FROM FactSales;
+```
+![Screenshot 2024-03-23 054249](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/f3f46171-6efe-4d48-be1e-34cc4652a460)
+
+**3. How many orders are in the dataset?**
+
+```sql
+SELECT 
+      COUNT(orderid) AS total_orders
+FROM FactSales;
+```
+
+![Screenshot 2024-03-23 054527](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/bf2926ff-2de1-4154-91f4-f26ced6177d8)
+
+**4. What is the average discount applied to orders?**
+
+```sql
+SELECT 
+      ROUND(AVG(discount),2) AS avg_discount
+FROM FactSales;
+```
+
+![image](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/65be0f87-086f-47f4-97d9-4523340628ad)
+
+**5. How many orders were placed in each year?**
+
+```sql
+SELECT 
+      YEAR(Orderdate) AS year,
+	  COUNT(Orderid) AS total_orders
+FROM FactSales
+GROUP BY YEAR(Orderdate)
+ORDER BY year;
+```
+
+![image](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/aa9a39f0-ec3f-4c2a-9e88-57a11df90a5f)
+
+
+**6. Category Sales Growth: Calculate the year-over-year growth in sales for each product category.**
+
+```sql
+WITH year_sales AS (
+      SELECT 
+            YEAR(orderdate) AS sales_year,
+			category,
+            ROUND(SUM(Sales),2) AS total_sales,
+	        LAG(ROUND(SUM(Sales),2))OVER(PARTITION BY category ORDER BY YEAR(orderdate)) AS previous_year_sales
+      FROM FactSales f
+	  JOIN dim_product p ON f.ProductKey = p.ProductKey
+      GROUP BY  YEAR(orderdate),Category
+)
+SELECT 
+      sales_year,
+	  category,
+	  total_sales,
+	  ROUND((total_sales - previous_year_sales)/previous_year_sales,2) AS yoy_growth
+FROM year_sales
+```
+
+![image](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/27a8392a-e730-4ba8-be68-6118807952ba)
+
+
+**7. Yearly Growth Rate: Calculate the yearly growth rate in sales from one year to the next, using window functions**
+
+```sql
+SELECT 
+       sales_year,
+	   total_sales,
+	   ROUND(((total_sales - previous_year_sales)/previous_year_sales)*100,2) AS yoy_growth
+FROM (SELECT 
+           YEAR(Orderdate) AS sales_year,
+	       ROUND(SUM(sales),2) AS total_sales,
+	       LAG(ROUND(SUM(sales),2))OVER(ORDER BY YEAR(Orderdate)) AS previous_year_sales
+      FROM FactSales
+	  GROUP BY YEAR(OrderDate)
+	  ) AS yearly_sales
+```
+
+![image](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/f8c009a1-afd9-47a5-93bd-eca54d07e47c)
+
+
+
 
 
 
