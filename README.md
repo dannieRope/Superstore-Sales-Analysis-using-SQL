@@ -566,6 +566,29 @@ ORDER BY total_revenue DESC,total_profit
 6. Recognizing William Brown as the customer with the most orders and Sean Miller as the customer with the highest spending, it's crucial to nurture relationships with these valuable customers. Implement loyalty programs, exclusive offers,and personalized communication to enhance their loyalty and encourage repeat purchases. Additionally, analyze their purchasing behavior to identify opportunities for upselling or cross-selling.
 
 
+DASHBOARD 
+After performing the analysis with SQL, I connected Power BI Desktop to the Marketdata database and imported all the required tables into Power BI for visualization purposes.
+This are the steps I took to before the data visualization. 
+
+- I defined relationships between the tables through data modeling. I also create calculated columns or measures as needed, and optimize the model for efficient analysis.
+
+- I utilized Power BI's wide range of visualization options to create compelling charts, graphs, and reports. Based on the analysis insights, create visualizations that effectively communicate key findings. 
+
+- I Organize the visualizations into interactive dashboards. The dashboards allow users to explore data dynamically and gain insights quickly.
+  
+
+Find the image of the dashboard below. 
+
+![Screenshot (8)](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/178d0201-f1c4-457e-9ccb-ff64290d3e15)
+
+
+
+
+
+
+
+
+
 
 
 
