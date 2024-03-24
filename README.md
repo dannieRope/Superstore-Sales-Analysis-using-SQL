@@ -566,7 +566,8 @@ ORDER BY total_revenue DESC,total_profit
 6. Recognizing William Brown as the customer with the most orders and Sean Miller as the customer with the highest spending, it's crucial to nurture relationships with these valuable customers. Implement loyalty programs, exclusive offers,and personalized communication to enhance their loyalty and encourage repeat purchases. Additionally, analyze their purchasing behavior to identify opportunities for upselling or cross-selling.
 
 
-DASHBOARD 
+# DASHBOARD 
+
 After performing the analysis with SQL, I connected Power BI Desktop to the Marketdata database and imported all the required tables into Power BI for visualization purposes.
 This are the steps I took to before the data visualization. 
 
