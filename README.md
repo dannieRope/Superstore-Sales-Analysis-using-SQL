@@ -582,6 +582,11 @@ Find the image of the dashboard below.
 
 ![Screenshot (8)](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/178d0201-f1c4-457e-9ccb-ff64290d3e15)
 
+I hope you found this post valuable and gained new insights. Your feedback is important, so feel free to leave a comment for any questions or feedback.
+Explore the interactive report [here]().
+
+Thank you for your time and attention.
+
 
 
 
