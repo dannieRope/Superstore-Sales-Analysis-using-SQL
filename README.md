@@ -571,7 +571,7 @@ ORDER BY total_revenue DESC,total_profit
 After performing the analysis with SQL, I connected Power BI Desktop to the Marketdata database and imported all the required tables into Power BI for visualization purposes.
 This are the steps I took to before the data visualization. 
 
-- I defined relationships between the tables through data modeling. I also create calculated columns or measures as needed, and optimize the model for efficient analysis.
+- I defined the relationships between the tables through data modeling. I also created calculated columns or measures as needed, and optimize the model for efficient analysis.
 
 - I utilized Power BI's wide range of visualization options to create compelling charts, graphs, and reports. Based on the analysis insights, create visualizations that effectively communicate key findings. 
 
@@ -580,14 +580,13 @@ This are the steps I took to before the data visualization.
 
 Find the image of the dashboard below. 
 
-![Screenshot (8)](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/178d0201-f1c4-457e-9ccb-ff64290d3e15)
+![Screenshot 2024-03-24 172620](https://github.com/dannieRope/Superstore-Sales-Analysis-using-SQL/assets/132214828/4c4f86c2-cb44-4603-ba93-f5e3177ac1a0)
+
 
 I hope you found this post valuable and gained new insights. Your feedback is important, so feel free to leave a comment for any questions or feedback.
 Explore the interactive report [here]().
 
 Thank you for your time and attention.
-
-
 
 
 
